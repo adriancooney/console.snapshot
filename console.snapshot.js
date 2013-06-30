@@ -31,12 +31,13 @@
 	 * @param  {int} scale Scale factor on the image
 	 * @return {null}   
 	 */
-	console.image = function(url) {
+	console.image = function(url, scale) {
+		scale = scale || 1;
 		var img = new Image();
 
 		img.onload = function() {
-			var dim = getBox(this.width, this.height);
-			console.log("%c" + dim.string, dim.style + "background: url(" + url + "); color: transparent;");
+			var dim = getBox(this.width * scale, this.height * scale);
+			console.log("%c" + dim.string, dim.style + "background-image: url(" + url + "); background-size: " + (this.width * scale) + "px " + (this.height * scale) + "px; color: transparent;");
 		};
 
 		img.src = url;
@@ -49,6 +50,6 @@
 	 * @return {null}         
 	 */
 	console.snapshot = function(canvas, scale) {
-		console.image(canvas.toDataURL());
+		console.image(canvas.toDataURL(), scale);
 	};
 })(console);
