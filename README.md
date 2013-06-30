@@ -7,7 +7,7 @@
 
 ## Usage
 ### console.snapshot( _&lt;canvas&gt;_ )
-`console.snapshot` takes in a `HTMLCanvasElement`, base64 encodes it using `toDataURL` and then outputs it to the canvas using `canvas.image`.
+`console.snapshot` takes in a `HTMLCanvasElement`, base64 encodes it using `toDataURL` and then outputs it to the canvas using `console.image`.
 
 ```js
 var canvas = document.createElement("canvas"),
@@ -21,7 +21,7 @@ console.snapshot(canvas);
 ```
 
 ### console.image( _&lt;url&gt;_ )
-`console.image` outputs and image from a url into the console. See [console.image](http://github.com/dunxrion/console.image).
+`console.image` outputs an image from a url into the console. See [console.image](http://github.com/dunxrion/console.image).
 
 ```js
 console.image("http://i.imgur.com/wWPQK.gif");
