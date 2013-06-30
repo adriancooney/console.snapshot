@@ -30,6 +30,6 @@ console.image("http://i.imgur.com/wWPQK.gif");
 
 ## Troubleshooting
 #### I'm getting "Uncaught Error: SecurityError: DOM Exception 18" when I try to snapshot the canvas
-This is what happens when you print non CORS enabled image on the canvas. The browser blocks the `toDataURL` function which is what `console.image` depends on print the canvas. To fix this, see [this tutorial on HTML5Rocks](http://www.html5rocks.com/en/tutorials/cors/) or consider passing your image through a CORS proxy such as [corsproxy.com](http://corsproxy.com).
+This is caused by printing a non CORS-enabled image on the canvas. The browser blocks the `toDataURL` function which is what `console.image` depends on to print the canvas. To fix this, see [this tutorial on HTML5Rocks](http://www.html5rocks.com/en/tutorials/cors/) or consider passing your image through a CORS proxy such as [corsproxy.com](http://corsproxy.com).
 
 License: MIT
