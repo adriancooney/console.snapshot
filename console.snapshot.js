@@ -31,12 +31,11 @@
 	 * @param  {int} scale Scale factor on the image
 	 * @return {null}   
 	 */
-	console.image = function(url, scale) {
-		scale = scale || 1;
+	console.image = function(url) {
 		var img = new Image();
 
 		img.onload = function() {
-			var dim = getBox(this.width * scale, this.height * scale);
+			var dim = getBox(this.width, this.height);
 			console.log("%c" + dim.string, dim.style + "background: url(" + url + "); color: transparent;");
 		};
 
@@ -49,7 +48,7 @@
 	 * @param  {HTMLCanvasElement} canvas The canvas element
 	 * @return {null}         
 	 */
-	console.snapshot = function(canvas) {
+	console.snapshot = function(canvas, scale) {
 		console.image(canvas.toDataURL());
 	};
 })(console);
