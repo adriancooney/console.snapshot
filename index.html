@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Page</title>
+    <style type="text/css">
+    	body {
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    	}
+
+		.wrapper {
+			width: 780px;
+			margin: 0 auto;
+		}
+
+		.columns div {
+			display: inline-block;
+			vertical-align: top;
+		}
+
+		.threequarters { width: 75%; }
+		.quarter { width: 25%; }
+
+		header h1 {
+			font-family: Monaco, monospace;
+		}
+
+		header h1 em {
+			font-style: italic;
+		}
+
+		header span {
+			display: block;
+			float: right;
+			margin-top: 14px;
+			font-weight: bold;
+			font-size: 18px;
+		}
+
+		header span a {
+			text-decoration: none;
+			color: #777;
+		}
+
+		p {
+			line-height: 140%;
+			margin: 12px;
+		}
+
+		button {
+			display: block;
+			margin: 0 auto;
+			padding: 12px;
+			border: none;
+			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+			font-weight: bold;
+			font-size: 16px;
+			background: #4a8eea;
+			color: #fff;
+			border-radius: 8px;
+			cursor: pointer;
+			margin-top: 120px;
+		}
+
+		code {
+			font-family: monospace;
+			color: #777;
+			background: #eee;
+			border: 1px solid #ddd;
+			margin: 4px;
+			padding: 1px 3px;
+			border-radius: -9px;
+		}
+    </style>
+</head>
+<body>
+	<div class="wrapper">
+		<header>
+			<span><a href="http://github.com/dunxrion/console.snapshot">Github</a></span>
+			<h1>console.snapshot( <em>canvas</em> )</h1>
+		</header>
+		<div class="content">
+			<p>Snapshot a canvas context and output it to the console.</p>
+			<div class="columns">
+				<div class="threequarters">
+					<canvas id="snappie" width="580" height="420"></canvas>
+				</div><div class="quarter">
+					<p>Pop open the Chrome Dev tools (<code>Ctrl/CMD + Shift + J</code>) and click the button below to snapshot the canvas to the left and see the snapshot within the console.</p>
+					<button id="snap">Snapshot</button>
+				</div>
+			</div>
+			<p>This is the brainchild of a <a href="https://github.com/dunxrion/console.image">bit of idiocy</a> and some insightful comments on a <a href="https://news.ycombinator.com/item?id=5962086">Hacker News thread</a> and was created by <a href="http://twitter.com/dunxrion">@dunxrion</a>.</p>
+		</div>
+	</div>
+</body>
+<script src="console.snapshot.js" type="text/javascript"></script>
+<script type="text/javascript">
+//Thanks Paul Irish. I love this.
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
+var canvas = document.getElementById("snappie"),
+	ctx = canvas.getContext("2d"),
+	width = canvas.width,
+	height = canvas.height,
+	w2 = width/2,
+	h2 = height/2,
+	flash = false;
+
+var Circle = function() {
+	this.x = 0;
+	this.y = 0;
+	this.radius = 5;
+	this.fill = "#fff";
+};
+
+Circle.prototype.update = function() {
+	this.angle += this.speed * 0.05;
+	this.x = w2 + (this.orbit * Math.cos(this.angle));
+	this.y = h2 + (this.orbit * Math.sin(this.angle));
+};
+
+Circle.prototype.render = function() {
+	ctx.save();
+	ctx.translate(this.x, this.y);
+	ctx.beginPath();
+	ctx.arc(0, 0, this.radius, 0, Math.PI*2, true);
+	ctx.closePath();
+	ctx.fillStyle = this.fill;
+	ctx.fill();
+	ctx.restore();
+};
+
+var circles = [];
+
+for(var i = 0, length = 10; i < length; i++) {
+	var rad = h2*0.8, //The radius of the swing
+		sector = -(Math.PI/2), //The sector to fill
+		step = i/(length - 1),
+		orbit = rad * step,
+		angle = sector + ((Math.PI/2) * step),
+		circle = new Circle;
+
+	circle.x = w2 + (orbit * Math.cos(angle));
+	circle.y = h2 + (orbit * Math.sin(angle));
+	circle.orbit = orbit;
+	circle.angle = angle;
+	circle.speed = step;
+	circle.index = i;
+
+	circles.push(circle);
+}
+
+(function draw() {
+	if(flash) ctx.fillStyle = "rgba(255, 255, 255, 1)", flash = false;
+	else ctx.fillStyle = "rgba(68, 193, 234, 0.3)";
+	ctx.fillRect(0, 0, width, height);
+	for (var i = circles.length - 1; i >= 0; i--) {
+		var c = circles[i];
+		c.update();
+		c.render();
+	};
+
+	requestAnimFrame(draw);
+})();
+
+document.getElementById("snap").addEventListener("click", function() {
+	flash = true;
+	console.snapshot(canvas);
+})
+
+</script>
+</html>
