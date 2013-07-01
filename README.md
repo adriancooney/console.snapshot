@@ -3,7 +3,7 @@
 
 `console.snapshot` takes and inputted _&lt;canvas&gt;_ element and outputs a snapshot of it into the console. It makes debugging the canvas a little less dramatic. See [this demo](http://dunxrion.github.io/console.snapshot). `console.snapshot` is a fork of the [`console.image`](http://github.com/dunxrion/console.image) and actually does something useful.
 
-![The demo](http://i.imgur.com/IYLD8pz.png)
+![The demo](http://i.imgur.com/fA0UGXT.png)
 
 ## Usage
 ### console.snapshot( _&lt;canvas&gt;_ )
