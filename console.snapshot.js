@@ -101,7 +101,7 @@
 
 	Profile.prototype.outputToConsole = function() {
 		var prevState = [], group = 1, scope = 1;
-		var callCount = 0;
+		var callCount = 0, stateChanges = 0;
 
 		console.group("Canvas snapshot");
 		//console.log("%cFPS: %c" + this.FPS, "color: green", "color: #000"); Fix the formula!
@@ -126,7 +126,8 @@
 						console.groupEnd();
 					} else {
 						for(var key in state)
-							if(prevState[scope] && prevState[scope][key] !== state[key]) console.log("%c" + key + " %c= " + state[key], "color: purple; font-style: italic", "color: #000");
+							if(prevState[scope] && prevState[scope][key] !== state[key]) 
+								console.log("%c" + key + " %c= " + state[key], "color: purple; font-style: italic", "color: #000"), stateChanges++;
 					}
 					
 					prevState[scope] = state;
@@ -141,6 +142,7 @@
 
 			console.group("Statistics");
 			console.log("Function call count: ", callCount);
+			console.log("State change count: ", stateChanges);
 			console.groupEnd();
 
 			console.groupEnd(); //End the major group
