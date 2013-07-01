@@ -58,7 +58,10 @@
 			color: #fff;
 			border-radius: 8px;
 			cursor: pointer;
-			margin-top: 120px;
+		}
+
+		button:first-child {
+			margin-top: 80px;
 		}
 
 		code {
@@ -86,6 +89,7 @@
 				</div><div class="quarter">
 					<p>Pop open the Chrome Dev tools (<code>Ctrl/CMD + Shift + J</code>) and click the button below to snapshot the canvas to the left and see the output within the console.</p>
 					<button id="snap">Snapshot</button>
+					<button id="screenie">Screenshot</button>
 				</div>
 			</div>
 			<p>This is the brainchild of a <a href="https://github.com/dunxrion/console.image">bit of idiocy</a> and some insightful comments on a <a href="https://news.ycombinator.com/item?id=5962086">Hacker News thread</a>. Created by <a href="http://twitter.com/dunxrion">@dunxrion</a>.</p>
@@ -170,9 +174,18 @@ for(var i = 0, length = 10; i < length; i++) {
 })();
 
 document.getElementById("snap").addEventListener("click", function() {
-	flash = true;
 	console.snapshot(canvas);
-})
+	setTimeout(function() {
+		flash = true;
+	}, 500)
+});
+
+document.getElementById("screenie").addEventListener("click", function() {
+	console.screenshot(canvas);
+	setTimeout(function() {
+		flash = true;
+	}, 500)
+});
 
 </script>
 </html>
