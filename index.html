@@ -48,7 +48,7 @@
 
 		button {
 			display: block;
-			margin: 0 auto;
+			margin: 8px auto;
 			padding: 12px;
 			border: none;
 			font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -60,8 +60,9 @@
 			cursor: pointer;
 		}
 
-		button:first-child {
-			margin-top: 80px;
+		.buttons {
+			margin-top: 50px;
+			width: 100%;
 		}
 
 		code {
@@ -88,8 +89,10 @@
 					<canvas id="snappie" width="580" height="420"></canvas>
 				</div><div class="quarter">
 					<p>Pop open the Chrome Dev tools (<code>Ctrl/CMD + Shift + J</code>) and click the button below to snapshot the canvas to the left and see the output within the console.</p>
-					<button id="snap">Snapshot</button>
-					<button id="screenie">Screenshot</button>
+					<div class="buttons">
+						<button id="snap">Snapshot</button>
+						<button id="screenie">Screenshot</button>
+					</div>
 				</div>
 			</div>
 			<p>This is the brainchild of a <a href="https://github.com/dunxrion/console.image">bit of idiocy</a> and some insightful comments on a <a href="https://news.ycombinator.com/item?id=5962086">Hacker News thread</a>. Created by <a href="http://twitter.com/dunxrion">@dunxrion</a>.</p>
@@ -174,6 +177,7 @@ for(var i = 0, length = 10; i < length; i++) {
 })();
 
 document.getElementById("snap").addEventListener("click", function() {
+	console.log("console.snapshot(%O)", canvas);
 	console.snapshot(canvas);
 	setTimeout(function() {
 		flash = true;
@@ -181,6 +185,7 @@ document.getElementById("snap").addEventListener("click", function() {
 });
 
 document.getElementById("screenie").addEventListener("click", function() {
+	console.log("console.screenshot(%O)", canvas);
 	console.screenshot(canvas);
 	setTimeout(function() {
 		flash = true;
