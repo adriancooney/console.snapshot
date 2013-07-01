@@ -32,6 +32,8 @@ console.screenshot(canvas);
 console.screenshot(canvas, 0.8); //Snapshot it and scale the output to 80% of the original size
 ```
 
+![Screenshot demo](http://i.imgur.com/e1EUuhM.png)
+
 ### console.image( _&lt;url&gt;_ )
 `console.image` outputs an image from a url into the console. See [console.image](http://github.com/dunxrion/console.image).
 
