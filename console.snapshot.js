@@ -25,19 +25,144 @@
 		}
 	}
 
+	var Profile = function(ctx, canvas) {
+		this.ctx = ctx;
+		this.canvas = canvas;
+		this.stack = [];
+		this.startTime = (new Date()).getTime();
+		this.collectFPS = true;
+		this.frames = 0;
+		
+		//Add the initial state
+		this.addState(this.returnState(ctx));
+
+		//Add a sort of man in the middle/proxy for all the
+		//context functions
+		var that = this;
+		for(var fn in ctx) { //Move the native data to a namespace
+			if(typeof ctx[fn] == "function") {
+				ctx["_CF_" + fn] = ctx[fn];
+				(function(fn) { //Create the closure
+					ctx[fn] = function() {
+						that.addState(that.returnState(ctx));
+						that.addFunctionCall(fn, Array.prototype.slice.call(arguments)); 
+						ctx["_CF_" + fn].apply(ctx, arguments);
+					}
+				})(fn);
+			}
+		}
+
+		//Start collecting the frames
+		(function tick() {
+			if(that.collectFPS) that.frames++, requestAnimationFrame(tick);
+		})();
+	};
+
+	Profile.prototype.end = function() {
+		this.collectFPS = false;
+		this.duration = ((new Date()).getTime()) - this.startTime;
+		this.FPS = (this.frames * 1000)/this.duration; //TODO: fix this formula
+
+		//Remove the man in the middle
+		var ctx = this.ctx;
+		for(var fn in ctx) {
+			if(fn.match(/_CF_/)) {
+				fn = fn.replace("_CF_", "");
+				ctx[fn] = ctx["_CF_" + fn];
+				delete ctx["_CF_" + fn]; //And remove the cache
+			}
+		}
+	}
+
+	Profile.prototype.returnState = function(ctx) {
+		var obj = {};
+		if(!this._stateKeys) {
+			this._stateKeys = [];
+			for(var key in ctx) {
+				if(typeof ctx[key] == "string" || typeof ctx[key] == "number") this._stateKeys.push(key), obj[key] = ctx[key];
+			}
+		} else {
+			for (var i = this._stateKeys.length - 1; i >= 0; i--) {
+				var key = this._stateKeys[i];
+				obj[key] = ctx[key];
+			};
+		}
+
+		return obj;
+	};
+
+	Profile.prototype.addState = function(state) {
+		this.stack.push(["state", state]);
+	};
+
+	Profile.prototype.addFunctionCall = function(fn, args) {
+		this.stack.push(["functionCall", fn, args]);
+	};
+
+	Profile.prototype.outputToConsole = function() {
+		var prevState = [], group = 1, scope = 1;
+		var callCount = 0;
+
+		console.group("Canvas snapshot");
+		//console.log("%cFPS: %c" + this.FPS, "color: green", "color: #000"); Fix the formula!
+
+		console.group("Rendering");
+		this.stack.forEach(function(item, i) {
+			switch(item[0]) {
+				case "functionCall":
+					callCount++;
+
+					if(item[1] == "save") console.groupCollapsed("Saved Draw State #" + group), group++, scope++;
+					console.log("%c" + item[1] + "%c(" + item[2].join(", ") + ")", "color: blue; font-style: italic", "color: #000");
+					if(item[1] == "restore") console.groupEnd(), scope--;
+				break;
+
+				case "state":
+					var state = item[1];
+
+					if(!prevState.length) {
+						console.groupCollapsed("Initial state");
+						for(var key in state) console.log(key + " = " + state[key]);
+						console.groupEnd();
+					} else {
+						for(var key in state)
+							if(prevState[scope] && prevState[scope][key] !== state[key]) console.log("%c" + key + " %c= " + state[key], "color: purple; font-style: italic", "color: #000");
+					}
+					
+					prevState[scope] = state;
+				break;
+			}
+		});
+		console.groupEnd();
+	
+		console.groupCollapsed("Screenshot");
+		console.screenshot(this.canvas, function() {
+			console.groupEnd(); //End the screenshot group
+
+			console.group("Statistics");
+			console.log("Function call count: ", callCount);
+			console.groupEnd();
+
+			console.groupEnd(); //End the major group
+		});
+	};
+
 	/**
 	 * Display an image in the console.
 	 * @param  {string} url The url of the image.
 	 * @param  {int} scale Scale factor on the image
 	 * @return {null}   
 	 */
-	console.image = function(url, scale) {
-		scale = scale || 1;
+	console.image = function(url, scale, callback) {
+		if(typeof scale == "function") callback = scale, scale = 1;
+		if(!scale) scale = 1;
+
 		var img = new Image();
 
 		img.onload = function() {
 			var dim = getBox(this.width * scale, this.height * scale);
 			console.log("%c" + dim.string, dim.style + "background-image: url(" + url + "); background-size: " + (this.width * scale) + "px " + (this.height * scale) + "px; color: transparent;");
+			if(callback) callback();
 		};
 
 		img.src = url;
@@ -49,7 +174,16 @@
 	 * @param  {HTMLCanvasElement} canvas The canvas element
 	 * @return {null}         
 	 */
-	console.snapshot = function(canvas, scale) {
+	console.screenshot = function(canvas, scale) {
 		console.image(canvas.toDataURL(), scale);
 	};
+
+	console.snapshot = function(canvas) {
+		//Start the profiling.
+		var profile = new Profile(canvas.getContext("2d"), canvas);
+		requestAnimationFrame(function() {
+			profile.end();
+			profile.outputToConsole();
+		});
+	}
 })(console);
