@@ -25,6 +25,11 @@
 		}
 	}
 
+	/**
+	 * Profile class for a canvas
+	 * @param {CanvasRenderingContext2D} ctx    The context to profile
+	 * @param {HTMLCanvasElement} canvas The canvas element
+	 */
 	var Profile = function(ctx, canvas) {
 		this.ctx = ctx;
 		this.canvas = canvas;
@@ -37,7 +42,9 @@
 		this.addState(this.returnState(ctx));
 
 		//Add a sort of man in the middle/proxy for all the
-		//context functions
+		//context render functions and tell the profiler
+		//when a function call happens. We send along the 
+		//function name, the arguments, and the context state
 		var that = this;
 		for(var fn in ctx) { //Move the native data to a namespace
 			if(typeof ctx[fn] == "function") {
@@ -58,6 +65,10 @@
 		})();
 	};
 
+	/**
+	 * Stop profiling
+	 * @return {null}
+	 */
 	Profile.prototype.end = function() {
 		this.collectFPS = false;
 		this.duration = ((new Date()).getTime()) - this.startTime;
@@ -74,6 +85,13 @@
 		}
 	}
 
+	/**
+	 * Return the useful data from the context
+	 * to represent the state of the context
+	 * Only adds the properties and not functions
+	 * @param  {CanvasRenderContext2D} ctx The context to make a state from
+	 * @return {Object}     State object
+	 */
 	Profile.prototype.returnState = function(ctx) {
 		var obj = {};
 		if(!this._stateKeys) {
@@ -91,18 +109,33 @@
 		return obj;
 	};
 
+	/**
+	 * Add a state object to the current profile
+	 * @param {StateObject} state See Profile#returnState
+	 */
 	Profile.prototype.addState = function(state) {
 		this.stack.push(["state", state]);
 	};
 
+	/**
+	 * Add a function call to the current profile
+	 * @param {string} fn   The function name
+	 * @param {array}   args The array of arguments passed to the function
+	 */
 	Profile.prototype.addFunctionCall = function(fn, args) {
 		this.stack.push(["functionCall", fn, args]);
 	};
 
+	/**
+	 * Output the profile to the console in a nice, readable way.
+	 * @return {null} 
+	 */
 	Profile.prototype.outputToConsole = function() {
 		var prevState = [], group = 1, scope = 1;
 		var callCount = 0, stateChanges = 0;
 
+		//console.group is a synchronous so this led to some
+		//messy state saving and changing but it works in the end
 		console.group("Canvas snapshot");
 		//console.log("%cFPS: %c" + this.FPS, "color: green", "color: #000"); Fix the formula!
 
@@ -136,14 +169,15 @@
 		});
 		console.groupEnd();
 	
+		//Add the screenshot
 		console.groupCollapsed("Screenshot");
 		console.screenshot(this.canvas, function() {
 			console.groupEnd(); //End the screenshot group
 
-			console.group("Statistics");
+			console.group("Statistics"); //Stats group
 			console.log("Function call count: ", callCount);
 			console.log("State change count: ", stateChanges);
-			console.groupEnd();
+			console.groupEnd(); //End stats group
 
 			console.groupEnd(); //End the major group
 		});
@@ -180,6 +214,11 @@
 		console.image(canvas.toDataURL(), scale);
 	};
 
+	/**
+	 * Snapshot/Profile a canvas element
+	 * @param  {HTMLCanvasElement} canvas The canvas element to profile
+	 * @return {null}        
+	 */
 	console.snapshot = function(canvas) {
 		//Start the profiling.
 		var profile = new Profile(canvas.getContext("2d"), canvas);
