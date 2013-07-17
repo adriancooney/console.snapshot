@@ -211,7 +211,13 @@
 	 * @return {null}         
 	 */
 	console.screenshot = function(canvas, scale) {
-		console.image(canvas.toDataURL(), scale);
+		var url = canvas.toDataURL(),
+			width = canvas.width,
+			height = canvas.height,
+			scale = scale || 1,
+			dim = getBox(width * scale, height * scale);
+
+		console.log("%c" + dim.string, dim.style + "background-image: url(" + url + "); background-size: " + (width * scale) + "px " + (height * scale) + "px; color: transparent;");
 	};
 
 	/**
