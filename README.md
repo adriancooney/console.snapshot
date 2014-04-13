@@ -1,7 +1,7 @@
 # console.snapshot( _canvas_ )
 ### A simple canvas profiler
 
-`console.snapshot` takes and inputted _&lt;canvas&gt;_ element and outputs a snapshot of it into the console. It makes debugging the canvas a little less dramatic. See [this demo](http://dunxrion.github.io/console.snapshot). `console.snapshot` is a fork of the [`console.image`](http://github.com/dunxrion/console.image) and actually does something useful.
+`console.snapshot` takes and inputted _&lt;canvas&gt;_ element and outputs a snapshot of it into the console. It makes debugging the canvas a little less dramatic. See [this demo](http://adriancooney.github.io/console.snapshot). `console.snapshot` is a fork of the [`console.image`](http://github.com/adriancooney/console.image) and actually does something useful.
 
 ![The demo](http://i.imgur.com/fA0UGXT.png)
 
@@ -35,7 +35,7 @@ console.screenshot(canvas, 0.8); //Snapshot it and scale the output to 80% of th
 ![Screenshot demo](http://i.imgur.com/e1EUuhM.png)
 
 ### console.image( _&lt;url&gt;_ )
-`console.image` outputs an image from a url into the console. See [console.image](http://github.com/dunxrion/console.image).
+`console.image` outputs an image from a url into the console. See [console.image](http://github.com/adriancooney/console.image).
 
 ```js
 console.image("http://i.imgur.com/wWPQK.gif");
