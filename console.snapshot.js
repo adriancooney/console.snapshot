@@ -20,8 +20,8 @@
 	 */
 	function getBox(width, height) {
 		return {
-			string: "+",
-			style: "font-size: 1px; padding: " + Math.floor(height/2) + "px " + Math.floor(width/2) + "px; line-height: " + height + "px;"
+			string: "",
+			style: "font-size: 1px; padding-left: "+width+"px; padding-bottom: "+height+"px;"
 		}
 	}
 
