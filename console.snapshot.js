@@ -217,7 +217,7 @@
 			scale = scale || 1,
 			dim = getBox(width * scale, height * scale);
 
-		console.log("%c" + dim.string, dim.style + "background-image: url(" + url + "); background-size: " + (width * scale) + "px " + (height * scale) + "px; color: transparent;");
+		console.log("%c" + dim.string, dim.style + "background-image: url(" + url + "); background-size: " + (width * scale) + "px " + (height * scale) + "px; color: transparent;background-repeat: no-repeat!important");
 	};
 
 	/**
